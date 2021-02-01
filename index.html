@@ -4,13 +4,13 @@
         <title>Listing recettes</title>
     </head>
     <body>
-        <nav style="border:1px solid black;">
-            <input type="text"/> 
+        <nav id="navbar" style="border:1px solid black;">
+            <input ref="input" v-on:keyup.enter="search" type="text"/> 
             <span style="float:right" v-on:hover="alert('damn')">Listes des Ingredients</span>
         </nav>
         <div>
             <ul id="recipesList">
-                <li v-for="recipe in recipes" :key="recipe.name">
+                <li v-for="recipe in recipes" :key="recipe.title">
                     {{ recipe.name }}
                 </li>
             </ul>
@@ -18,13 +18,24 @@
     </body>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.0.5/vue.min.js"></script>
     <script>
-        var test = new Vue({
-            el: "#recipesList",
-            data :{
-                recipes:[
-                    {name:"Couscous"},
-                    {name:"Tartiflette"}
-                ]
+        var list = new Vue({
+            el : "#recipesList",
+            data : {
+                recipes : [{name:"Couscous"}]
+            }
+        })
+        new Vue({
+            el: "#navbar",
+            data : {
+                url : "https://api.spoonacular.com/recipes/complexSearch?apiKey=68e2fea5053d408383160530db1a36cb&query=",
+            },
+            methods:{
+                search : function(event) {
+                    fetch(this.url + this.$refs.input.value)
+                    .then(response => response.json())
+                    .then(response => list.recipies = response)
+                    .catch(error => alert("Erreur : " + error))
+                }
             }
         })
     </script>
